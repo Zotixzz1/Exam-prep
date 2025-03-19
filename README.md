@@ -31,6 +31,20 @@ data dictionaries with error handling process which could be:
 - [ ] feedback to user/error message
 - [ ] limiting field/variable length
 
+format:
+field name
+data type
+data format
+description
+example
+
+do for:
+log in
+consultations
+buy page
+
+after write about error handling
+
 ERD diagrams showing:
 - [ ] PKS
 - [ ] FKS
@@ -42,6 +56,12 @@ data flow diagrams
 static and dynamic model diagrams 
 
 test strategy
+
+format:
+date of test
+component to be tested
+type of test to be carried out
+
 
 show how you will test your digital solution
 
