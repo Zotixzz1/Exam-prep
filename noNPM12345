@@ -1,0 +1,67 @@
+const http = require('http');
+
+const PORT = 3000;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello, World!');
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+});
+
+how to send data from a javascript file to the server:
+
+const http = require('http');
+
+const PORT = 3000;
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/login') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      const data = JSON.parse(body);
+      console.log('Received login data:', data);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Login data received' }));
+    });
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
+  }
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+});
+
+login.js file that saves the data, IMPORTANT!
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  fetch('http://localhost:3000/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, password }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    alert('Login data sent to server');
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    alert('Error sending login data');
+  });
+});
+
