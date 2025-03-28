@@ -1,0 +1,83 @@
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const bodyParser = require('body-parser');
+const fs = require('fs');
+
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Database setup
+const db = new sqlite3.Database('./database.sqlite', (err) => {
+  if (err) {
+    console.error('Error opening database', err);
+  } else {
+    console.log('Connected to SQLite database');
+  }
+});
+
+// Create table
+db.run(`CREATE TABLE IF NOT EXISTS items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  description TEXT
+)`);
+
+// Routes
+app.get('/items', (req, res) => {
+  db.all('SELECT * FROM items', [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+app.post('/items', (req, res) => {
+  const { name, description } = req.body;
+  db.run('INSERT INTO items (name, description) VALUES (?, ?)', [name, description], function(err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ id: this.lastID });
+  });
+});
+
+// JSON file operations
+app.get('/json', (req, res) => {
+  fs.readFile('data.json', 'utf8', (err, data) => {
+    if (err) {
+      res.status(500).json({ error: 'Error reading file' });
+      return;
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+app.post('/json', (req, res) => {
+  const data = JSON.stringify(req.body, null, 2);
+  fs.writeFile('data.json', data, (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Error writing file' });
+      return;
+    }
+    res.json({ message: 'Data written successfully' });
+  });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+install npm if possible do thid in the terminal:
+
+npm init -y
+npm install express sqlite3 body-parser
+
+
